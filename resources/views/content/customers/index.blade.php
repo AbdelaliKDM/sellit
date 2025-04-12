@@ -80,13 +80,9 @@
                                     <a href="{{ route('customers.edit', $customer) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('customers.destroy', $customer) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('app.confirm_delete_customer') }}');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-sm btn-danger delete-customer-btn" data-customer-id="{{ $customer->id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -105,4 +101,55 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Customer Confirmation Modal -->
+<div class="modal fade" id="deleteCustomerModal" tabindex="-1" aria-labelledby="deleteCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header justify-content-between">
+                <h5 class="modal-title" id="deleteCustomerModalLabel">{{ __('app.confirm_delete_customer') }}</h5>
+                <button type="button" class="btn-close ms-0 me-n2" data-bs-dismiss="modal" aria-label="{{ __('app.close') }}"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ __('app.confirm_delete_customer_message') }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.no') }}</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">{{ __('app.yes') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for delete submission -->
+<form id="delete-customer-form" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        let customerToDelete = null;
+
+        // Show delete confirmation modal
+        $('.delete-customer-btn').on('click', function(e) {
+            e.preventDefault();
+            customerToDelete = $(this).data('customer-id');
+            $('#deleteCustomerModal').modal('show');
+        });
+
+        // Handle delete confirmation
+        $('#confirm-delete-btn').on('click', function() {
+            if (customerToDelete) {
+                const form = $('#delete-customer-form');
+                form.attr('action', `/customers/${customerToDelete}`);
+                form.submit();
+            }
+            $('#deleteCustomerModal').modal('hide');
+        });
+    });
+</script>
 @endsection

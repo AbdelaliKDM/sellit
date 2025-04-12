@@ -11,6 +11,17 @@
             </div>
         </div>
 
+        <!-- Toast container -->
+        <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1100">
+            <div id="pos-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto" id="toast-title">Notification</strong>
+                    {{-- <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button> --}}
+                </div>
+                <div class="toast-body" id="toast-message"></div>
+            </div>
+        </div>
+
         <div class="row">
             <!-- Left Side - Cart -->
             <div class="col-lg-8">
@@ -156,9 +167,9 @@
     <div class="modal fade" id="quickAddModal" tabindex="-1" aria-labelledby="quickAddModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header justify-content-between">
                     <h5 class="modal-title" id="quickAddModalLabel">{{ __('app.quick_add_product') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('app.close') }}"></button>
+                    <button type="button" class="btn-close ms-0 me-n2" data-bs-dismiss="modal" aria-label="{{ __('app.close') }}"></button>
                 </div>
                 <div class="modal-body">
                     <form id="quick-add-form">
@@ -217,6 +228,32 @@
             const $processOrderBtn = $('#process-order-btn');
             const $cancelOrderBtn = $('#cancel-order-btn');
             const $customerSelect = $('#customer-select');
+
+            // Toast elements
+            const toast = new bootstrap.Toast(document.getElementById('pos-toast'));
+            const $toastTitle = $('#toast-title');
+            const $toastMessage = $('#toast-message');
+
+            // Function to show toast message
+            function showToast(message, title = 'Notification', type = 'info') {
+                $toastTitle.text(title);
+                $toastMessage.text(message);
+
+                // Remove any existing color classes
+                const $toastElement = $('#pos-toast');
+                $toastElement.removeClass('bg-success bg-danger bg-warning text-white');
+
+                // Add appropriate color class based on type
+                if (type === 'success') {
+                    $toastElement.addClass('bg-success text-white');
+                } else if (type === 'error') {
+                    $toastElement.addClass('bg-danger text-white');
+                } else if (type === 'warning') {
+                    $toastElement.addClass('bg-warning');
+                }
+
+                toast.show();
+            }
 
             // Barcode scanning
             const $barcodeInput = $('#barcode-input');
@@ -400,19 +437,19 @@
                         url: `/pos/product-by-barcode?barcode=${barcode}`,
                         type: 'GET',
                         dataType: 'json',
-                        success: function(data) {
-                            if (data.error) {
-                                alert('Product not found');
+                        success: function(response) {
+                            if (response.success) {
+                                addToCart(response.data, 1, true); // Pass true to indicate from barcode
                             } else {
-                                addToCart(data, 1, true); // Pass true to indicate from barcode
-                                $barcodeInput.val('');
+                                showToast(response.message, 'Error', 'error');
                             }
                         },
                         error: function(error) {
                             console.error('Error:', error);
-                            alert('Error fetching product');
+                            showToast('Error fetching product', 'Error', 'error');
                         }
                     });
+                    $barcodeInput.val('');
                 }
             });
 
@@ -426,20 +463,24 @@
             // Handle product search
             $searchBtn.on('click', function() {
                 const query = $productSearch.val().trim();
-                if (query) {
+
                     $.ajax({
                         url: `/pos/search-products?query=${query}`,
                         type: 'GET',
                         dataType: 'json',
-                        success: function(data) {
-                            updateProductsDisplay(data);
+                        success: function(response) {
+                            if (response.success) {
+                                updateProductsDisplay(response.data);
+                            } else {
+                                showToast(response.message, 'Error', 'error');
+                            }
                         },
                         error: function(error) {
                             console.error('Error:', error);
-                            alert('Error searching products');
+                            showToast('Error searching products', 'Error', 'error');
                         }
                     });
-                }
+
             });
 
             $productSearch.on('keypress', function(e) {
@@ -454,7 +495,7 @@
                 $productsContainer.empty();
 
                 if (products.length === 0) {
-                    $productsContainer.html('<div class="col-12 text-center py-4">No products found</div>');
+                    $productsContainer.html('<div class="col-12 text-center py-4">{{__("app.no_products_found")}}</div>');
                     return;
                 }
 
@@ -527,11 +568,6 @@
                 const sellingPrice = parseFloat($('#selling-price').val()) || 0;
                 const quantity = parseInt($('#product-quantity').val()) || 1;
 
-                if (!name || purchasePrice <= 0 || sellingPrice <= 0) {
-                    alert('Please fill all required fields');
-                    return;
-                }
-
                 // Send request to create product
                 $.ajax({
                     url: '/pos/quick-add-product',
@@ -545,43 +581,43 @@
                         quantity: quantity,
                         _token: $('meta[name="csrf-token"]').attr('content')
                     },
-                    success: function(data) {
-                        // Add to cart
-                        const productData = {
-                            id: data.id,
-                            name: data.name,
-                            price: data.selling_price,
-                            barcode: data.barcode,
-                            image: data.image
-                        };
-                        addToCart(productData);
+                    success: function(response) {
+                        if (response.success) {
+                            // Add to cart
+                            const productData = {
+                                id: response.data.id,
+                                name: response.data.name,
+                                price: response.data.selling_price,
+                                barcode: response.data.barcode,
+                                image: response.data.image
+                            };
+                            addToCart(productData);
+                            showToast(response.message, 'Success', 'success');
 
-                        // Close modal and reset form
-                        $('#quickAddModal').modal('hide');
-                        $quickAddForm[0].reset();
+                            // Close modal and reset form
+                            $('#quickAddModal').modal('hide');
+                            $quickAddForm[0].reset();
+                        } else {
+                            showToast(response.message, 'Error', 'error');
+                        }
                     },
                     error: function(error) {
                         console.error('Error:', error);
-                        alert('Error adding product');
+                        const response = error.responseJSON || {};
+                        showToast(
+                            response.message || 'Error adding product',
+                            'Error',
+                            'error'
+                        );
                     }
                 });
             });
 
             // Process order
             $processOrderBtn.on('click', function() {
-                if (cart.length === 0) {
-                    alert('Please add items to cart');
-                    return;
-                }
-
                 const customerId = $customerSelect.val() || null;
                 const totalAmount = calculateTotal();
                 const paidAmount = parseFloat($paidAmountInput.val()) || 0;
-
-                if (paidAmount <= 0) {
-                    alert('Please enter paid amount');
-                    return;
-                }
 
                 // Prepare order data
                 const orderData = {
@@ -601,35 +637,120 @@
                     type: 'POST',
                     dataType: 'json',
                     data: orderData,
-                    success: function(data) {
-                        if (data.success) {
+                    success: function(response) {
+                        if (response.success) {
                             // Show success message
-                            alert('Order processed successfully!');
+                            showToast(response.message, 'Success', 'success');
 
                             // Clear cart
                             cart = [];
                             updateCartDisplay();
 
                             // Redirect to order details or print receipt
-                            window.location.reload();
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1500);
                         } else {
-                            alert(data.message || 'Error processing order');
+                            showToast(response.message, 'Error', 'error');
                         }
                     },
                     error: function(error) {
                         console.error('Error:', error);
-                        alert('Error processing order');
+                        const response = error.responseJSON || {};
+                        showToast(
+                            response.message || 'Error processing order',
+                            'Error',
+                            'error'
+                        );
                     }
                 });
             });
 
             // Cancel order
             $cancelOrderBtn.on('click', function() {
-                if (confirm('Are you sure you want to cancel this order?')) {
-                    cart = [];
-                    updateCartDisplay();
-                }
+                $('#cancelOrderModal').modal('show');
+            });
+
+            // Confirm cancel order
+            $('#confirm-cancel-btn').on('click', function() {
+                cart = [];
+                updateCartDisplay();
+                $('#cancelOrderModal').modal('hide');
+                // No toast notification here
             });
         });
     </script>
 @endsection
+
+</div>
+
+    <!-- Quick Add Product Modal -->
+    <div class="modal fade" id="quickAddModal" tabindex="-1" aria-labelledby="quickAddModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header justify-content-between">
+                    <h5 class="modal-title" id="quickAddModalLabel">{{ __('app.quick_add_product') }}</h5>
+                    <button type="button" class="btn-close ms-0 me-n2" data-bs-dismiss="modal" aria-label="{{ __('app.close') }}"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="quick-add-form">
+                        <div class="mb-3">
+                            <label for="product-name" class="form-label">{{ __('app.product_name') }}</label>
+                            <input type="text" class="form-control" id="product-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-barcode" class="form-label">{{ __('app.barcode_optional') }}</label>
+                            <input type="text" class="form-control" id="product-barcode">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="purchase-price" class="form-label">{{ __('app.purchase_price') }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">{{ $currencySymbol }}</span>
+                                    <input type="number" class="form-control" id="purchase-price" min="0"
+                                        step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="selling-price" class="form-label">{{ __('app.selling_price') }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">{{ $currencySymbol }}</span>
+                                    <input type="number" class="form-control" id="selling-price" min="0"
+                                        step="0.01" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-quantity" class="form-label">{{ __('app.quantity') }}</label>
+                            <input type="number" class="form-control" id="product-quantity" min="1"
+                                value="1" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.cancel') }}</button>
+                    <button type="button" class="btn btn-primary" id="save-product-btn">{{ __('app.save_add_to_cart') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Cancel Order Confirmation Modal -->
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content justify-content-between">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelOrderModalLabel">{{ __('app.confirm_cancel') }}</h5>
+                    <button type="button" class="btn-close ms-0 me-n2" data-bs-dismiss="modal" aria-label="{{ __('app.close') }}"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ __('app.confirm_cancel_message') }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.no') }}</button>
+                    <button type="button" class="btn btn-danger" id="confirm-cancel-btn">{{ __('app.yes') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>

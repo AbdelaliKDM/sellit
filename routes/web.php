@@ -5,6 +5,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CustomerController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home')->middleware('auth');
@@ -51,3 +52,7 @@ Route::put('/orders/{order}/update-payment', [OrderController::class, 'updatePay
 // Add these routes to your web.php file
 Route::get('/settings', [App\Http\Controllers\SettingController::class, 'index'])->name('settings.index');
 Route::put('/settings', [App\Http\Controllers\SettingController::class, 'update'])->name('settings.update');
+
+// Account Routes
+Route::get('/account', [AccountController::class, 'index'])->name('account.index')->middleware('auth');
+Route::put('/account', [AccountController::class, 'update'])->name('account.update')->middleware('auth');

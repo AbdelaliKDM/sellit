@@ -141,7 +141,7 @@
                                 @if($order->customer)
                                 <a href="{{ route('customers.show', $order->customer) }}">{{ $order->customer->name }}</a>
                                 @else
-                                <span class="text-muted">{{ __('app.walk_in_customer') }}</span>
+                                <span class="text-muted">{{ __('app.walking_customer') }}</span>
                                 @endif
                             </td>
                             <td>{{ number_format($order->total_amount, 2) }} {{ $currencySymbol }}</td>

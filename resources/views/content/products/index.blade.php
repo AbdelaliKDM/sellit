@@ -107,13 +107,54 @@
                                 <a href="{{ route('discounts.edit', $discount) }}" class="btn btn-sm btn-outline-warning">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('discounts.destroy', $discount) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('app.confirm_remove_discount') }}');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </form>
+                                <!-- Replace the discount delete form with button -->
+                                <button type="button" class="btn btn-sm btn-outline-danger delete-discount-btn" data-discount-id="{{ $discount->id }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+
+                                <!-- Update the scripts section -->
+                                @section('scripts')
+                                <script>
+                                    $(document).ready(function() {
+                                        let productToDelete = null;
+                                        let discountToDelete = null;
+
+                                        // Show delete confirmation modal
+                                        $('.delete-product-btn').on('click', function(e) {
+                                            e.preventDefault();
+                                            productToDelete = $(this).data('product-id');
+                                            $('#deleteProductModal').modal('show');
+                                        });
+
+                                        // Handle delete confirmation
+                                        $('#confirm-delete-btn').on('click', function() {
+                                            if (productToDelete) {
+                                                const form = $('#delete-product-form');
+                                                form.attr('action', `/products/${productToDelete}`);
+                                                form.submit();
+                                            }
+                                            $('#deleteProductModal').modal('hide');
+                                        });
+
+                                        // Show discount delete confirmation modal
+                                        $('.delete-discount-btn').on('click', function(e) {
+                                            e.preventDefault();
+                                            discountToDelete = $(this).data('discount-id');
+                                            $('#deleteDiscountModal').modal('show');
+                                        });
+
+                                        // Handle discount delete confirmation
+                                        $('#confirm-discount-delete-btn').on('click', function() {
+                                            if (discountToDelete) {
+                                                const form = $('#delete-discount-form');
+                                                form.attr('action', `/discounts/${discountToDelete}`);
+                                                form.submit();
+                                            }
+                                            $('#deleteDiscountModal').modal('hide');
+                                        });
+                                    });
+                                </script>
+                                @endsection
                                 @else
                                 <a href="{{ route('products.discounts.create', $product) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-tag"></i> {{ __('app.add') }}
@@ -125,13 +166,9 @@
                                     <a href="{{ route('products.edit', $product) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('app.confirm_delete_product') }}');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-sm btn-danger delete-product-btn" data-product-id="{{ $product->id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -150,4 +187,79 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Product Confirmation Modal -->
+<div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header justify-content-between">
+                <h5 class="modal-title" id="deleteProductModalLabel">{{ __('app.confirm_delete_product') }}</h5>
+                <button type="button" class="btn-close ms-0 me-n2" data-bs-dismiss="modal" aria-label="{{ __('app.close') }}"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ __('app.confirm_delete_product_message') }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.no') }}</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">{{ __('app.yes') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for delete submission -->
+<form id="delete-product-form" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+<!-- Delete Discount Confirmation Modal -->
+<div class="modal fade" id="deleteDiscountModal" tabindex="-1" aria-labelledby="deleteDiscountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header justi">
+                <h5 class="modal-title" id="deleteDiscountModalLabel">{{ __('app.confirm_remove_discount') }}</h5>
+                <button type="button" class="btn-close ms-0 me-n2" data-bs-dismiss="modal" aria-label="{{ __('app.close') }}"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ __('app.confirm_remove_discount_message') }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.no') }}</button>
+                <button type="button" class="btn btn-danger" id="confirm-discount-delete-btn">{{ __('app.yes') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for discount delete submission -->
+<form id="delete-discount-form" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        let productToDelete = null;
+
+        // Show delete confirmation modal
+        $('.delete-product-btn').on('click', function(e) {
+            e.preventDefault();
+            productToDelete = $(this).data('product-id');
+            $('#deleteProductModal').modal('show');
+        });
+
+        // Handle delete confirmation
+        $('#confirm-delete-btn').on('click', function() {
+            if (productToDelete) {
+                const form = $('#delete-product-form');
+                form.attr('action', `/products/${productToDelete}`);
+                form.submit();
+            }
+            $('#deleteProductModal').modal('hide');
+        });
+    });
+</script>
 @endsection

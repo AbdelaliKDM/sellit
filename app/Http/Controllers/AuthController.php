@@ -29,9 +29,9 @@ class AuthController extends Controller
      */
     public function showRegistrationForm()
     {
-        // Check if registration is enabled
-        if (! SettingsHelper::isRegistrationEnabled()) {
-            return redirect()->route('login')->with('error', 'Registration is currently disabled.');
+        if (!SettingsHelper::isRegistrationEnabled()) {
+            return redirect()->route('login')
+                ->with('error', __('app.registration_disabled'));
         }
 
         return view('content.auth.register');

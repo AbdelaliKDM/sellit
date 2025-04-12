@@ -49,6 +49,7 @@ class SettingController extends Controller
             session()->put('locale', $validated['language']);
         }
 
-        return redirect()->route('settings.index')->with('success', 'Settings updated successfully.');
+        return redirect()->route('settings.index')
+            ->with('success', __('app.settings_updated'));
     }
 }

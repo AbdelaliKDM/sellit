@@ -30,9 +30,19 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav">
+                        <li class="nav-item d-flex align-items-center me-2">
+                            <span class="nav-link text-light">
+                                <i class="fas fa-user-circle"></i> {{ Auth::user()->name }}
+                            </span>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('logout')}}">
-                                <i class="fas fa-sign-out-alt"></i> {{ __('app.logout') }}
+                            <a class="nav-link" href="{{ route('account.index') }}" title="{{ __('app.account_settings') }}">
+                                <i class="fas fa-user-cog"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('logout') }}" title="{{ __('app.logout') }}">
+                                <i class="fas fa-sign-out-alt"></i>
                             </a>
                         </li>
                     </ul>

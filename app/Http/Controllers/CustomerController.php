@@ -59,7 +59,7 @@ class CustomerController extends Controller
         Customer::create($validated);
 
         return redirect()->route('customers.index')
-            ->with('success', 'Customer created successfully.');
+            ->with('success', __('app.customer_created'));
     }
 
     /**
@@ -103,7 +103,7 @@ class CustomerController extends Controller
         $customer->update($validated);
 
         return redirect()->route('customers.index')
-            ->with('success', 'Customer updated successfully.');
+            ->with('success', __('app.customer_updated'));
     }
 
     /**
@@ -119,6 +119,6 @@ class CustomerController extends Controller
         $customer->delete();
 
         return redirect()->route('customers.index')
-            ->with('success', 'Customer deleted successfully.');
+            ->with('success', __('app.customer_deleted'));
     }
 }

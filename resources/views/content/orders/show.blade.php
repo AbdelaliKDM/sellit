@@ -112,7 +112,7 @@
                             @if($order->customer)
                             <a href="{{ route('customers.show', $order->customer) }}">{{ $order->customer->name }}</a>
                             @else
-                            <span class="text-muted">{{ __('app.walk_in_customer') }}</span>
+                            <span class="text-muted">{{ __('app.walking_customer') }}</span>
                             @endif
                         </div>
                     </div>
@@ -197,6 +197,21 @@
         }
         .card-body {
             padding: 0 !important;
+        }
+
+        /* Hide product images when printing */
+        td .d-flex img, td .d-flex div[style*="border-radius: 50%"] {
+            display: none !important;
+        }
+
+        /* Hide order info card except for date */
+        .col-md-4 .card:first-of-type .mb-3:not(:nth-child(2)) {
+            display: none !important;
+        }
+
+        /* Hide actions card completely */
+        .col-md-4 .card:last-of-type {
+            display: none !important;
         }
     }
 </style>

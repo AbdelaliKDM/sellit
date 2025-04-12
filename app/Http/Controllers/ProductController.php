@@ -58,7 +58,7 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'barcode' => 'required|string|unique:products',
+            'barcode' => 'nullable|string|unique:products',
             'purchase_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
@@ -75,7 +75,7 @@ class ProductController extends Controller
         Product::create($validated);
 
         return redirect()->route('products.index')
-            ->with('success', 'Product created successfully.');
+            ->with('success', __('app.product_created'));
     }
 
     /**
@@ -93,7 +93,7 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'barcode' => 'required|string|unique:products,barcode,' . $product->id,
+            'barcode' => 'nullable|string|unique:products,barcode,' . $product->id,
             'purchase_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
@@ -115,7 +115,7 @@ class ProductController extends Controller
         $product->update($validated);
 
         return redirect()->route('products.index')
-            ->with('success', 'Product updated successfully.');
+            ->with('success', __('app.product_updated'));
     }
 
     /**
@@ -131,6 +131,6 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('products.index')
-            ->with('success', 'Product deleted successfully.');
+            ->with('success', __('app.product_deleted'));
     }
 }

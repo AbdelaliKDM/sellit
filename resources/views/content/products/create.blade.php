@@ -29,7 +29,7 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="barcode" class="form-label">{{ __('app.barcode') }}</label>
-                        <input type="text" class="form-control @error('barcode') is-invalid @enderror" id="barcode" name="barcode" value="{{ old('barcode') }}" required>
+                        <input type="text" class="form-control @error('barcode') is-invalid @enderror" id="barcode" name="barcode" value="{{ old('barcode') }}">
                         @error('barcode')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

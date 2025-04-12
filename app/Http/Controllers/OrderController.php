@@ -67,7 +67,7 @@ class OrderController extends Controller
         $order->status = $validated['status'];
         $order->save();
 
-        return redirect()->back()->with('success', 'Order status updated successfully.');
+        return redirect()->back()->with('success', __('app.order_status_updated'));
     }
 
     /**
@@ -87,6 +87,6 @@ class OrderController extends Controller
         $order->status = $remainingAmount > 0 ? 'pending' : 'completed';
         $order->save();
 
-        return redirect()->back()->with('success', 'Payment updated successfully.');
+        return redirect()->back()->with('success', __('app.payment_updated'));
     }
 }

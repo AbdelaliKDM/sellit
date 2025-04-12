@@ -28,14 +28,22 @@ class PosController extends Controller
     public function searchProducts(Request $request)
     {
         $query = $request->input('query');
-        $products = Product::where('status', 'available')
-            ->where(function ($q) use ($query) {
+
+        $products = Product::where('status', 'available')->orderBy('name');
+
+
+        if($query){
+            $products = $products->where(function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
                     ->orWhere('barcode', 'like', "%{$query}%");
-            })
-            ->get();
+            });
+        }
+        $products = $products->get();
 
-        return response()->json($products);
+        return response()->json([
+            'success' => true,
+            'data' => $products
+        ]);
     }
 
     /**
@@ -44,14 +52,24 @@ class PosController extends Controller
     public function getProductByBarcode(Request $request)
     {
         $barcode = $request->input('barcode');
-        $product = Product::where('barcode', $barcode)->where('status', 'available')->first();
+        $product = Product::where('barcode', $barcode)
+            ->where('status', 'available')
+            ->first();
 
-        if ($product) {
-            $product->price = $product->getCurrentPrice();
-            return response()->json($product);
+        if (!$product) {
+            return response()->json([
+                'success' => false,
+                'message' => __('app.product_not_found'),
+                'data' => null
+            ]);
         }
 
-        return response()->json(['error' => 'Product not found'], 404);
+        $product->price = $product->getCurrentPrice();
+        return response()->json([
+            'success' => true,
+            'message' => 'Product found',
+            'data' => $product
+        ]);
     }
 
     /**
@@ -59,38 +77,72 @@ class PosController extends Controller
      */
     public function quickAddProduct(Request $request)
     {
+        // Validate the request data
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'barcode' => 'nullable|string|max:255|unique:products',
-            'purchase_price' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0',
+            'barcode' => 'nullable|string|max:100|unique:products,barcode',
+            'purchase_price' => 'required|numeric|min:0.01',
+            'selling_price' => 'required|numeric|min:0.01',
             'quantity' => 'required|integer|min:1',
+        ], [
+            'name.required' => __('app.product_name_required'),
+            'purchase_price.min' => __('app.purchase_price_positive'),
+            'selling_price.min' => __('app.selling_price_positive'),
         ]);
 
-        $product = Product::create([
-            'name' => $validated['name'],
-            'barcode' => $validated['barcode'],
-            'purchase_price' => $validated['purchase_price'],
-            'selling_price' => $validated['selling_price'],
-            'quantity' => $validated['quantity'],
-            'status' => 'available',
-        ]);
+        try {
+            // Create the product
+            $product = Product::create([
+                'name' => $validated['name'],
+                'barcode' => $validated['barcode'],
+                'purchase_price' => $validated['purchase_price'],
+                'selling_price' => $validated['selling_price'],
+                'quantity' => $validated['quantity'],
+                'status' => 'available',
+            ]);
 
-        return response()->json($product);
+            return response()->json([
+                'success' => true,
+                'message' => __('app.product_created'),
+                'data' => $product
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 422);
+        }
     }
 
-    /**
-     * Process the order.
-     */
     public function processOrder(Request $request)
     {
+        // Check if cart is empty
+        if (empty($request->input('items')) || !is_array($request->input('items'))) {
+            return response()->json([
+                'success' => false,
+                'message' => __('app.cart_empty'),
+                'data' => null
+            ], 422);
+        }
+
+        // Check if paid amount is valid
+        $paidAmount = $request->input('paid_amount');
+        if (!$paidAmount || $paidAmount <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => __('app.paid_amount_required'),
+                'data' => null
+            ], 422);
+        }
+
         $validated = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
             'items' => 'required|array|min:1',
             'items.*.id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
             'total_amount' => 'required|numeric|min:0',
-            'paid_amount' => 'required|numeric|min:0',
+            'paid_amount' => 'required|numeric|min:0.01',
         ]);
 
         DB::beginTransaction();
@@ -116,9 +168,9 @@ class PosController extends Controller
                 $product = Product::findOrFail($itemData['id']);
 
                 // Check if enough stock
-                if ($product->quantity < $itemData['quantity']) {
+                /* if ($product->quantity < $itemData['quantity']) {
                     throw new \Exception("Not enough stock for {$product->name}");
-                }
+                } */
 
                 // Calculate amount and profit
                 $price = $product->getCurrentPrice(); // Use discounted price if available
@@ -151,14 +203,17 @@ class PosController extends Controller
 
             return response()->json([
                 'success' => true,
-                'order_id' => $order->id,
-                'message' => 'Order processed successfully',
+                'message' => __('app.order_processed'),
+                'data' => [
+                    'order_id' => $order->id
+                ]
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
+                'data' => null
             ], 422);
         }
     }

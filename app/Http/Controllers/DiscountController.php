@@ -30,7 +30,7 @@ class DiscountController extends Controller
         $product->discounts()->create($validated);
 
         return redirect()->route('products.index')
-            ->with('success', 'Discount added successfully.');
+            ->with('success', __('app.discount_added'));
     }
 
     /**
@@ -58,7 +58,7 @@ class DiscountController extends Controller
         $discount->update($validated);
 
         return redirect()->route('products.index')
-            ->with('success', 'Discount updated successfully.');
+            ->with('success', __('app.discount_updated'));
     }
 
     /**
@@ -69,6 +69,6 @@ class DiscountController extends Controller
         $discount->delete();
 
         return redirect()->route('products.index')
-            ->with('success', 'Discount removed successfully.');
+            ->with('success', __('app.discount_deleted'));
     }
 }
