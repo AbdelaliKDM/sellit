@@ -370,6 +370,28 @@
                 }
             }
 
+            // Update quantity of cart item
+            function updateQuantity(index, newQuantity) {
+                if (index >= 0 && index < cart.length) {
+                    // Ensure quantity is at least 1
+                    newQuantity = Math.max(1, newQuantity);
+
+                    // Update quantity and recalculate total
+                    cart[index].quantity = newQuantity;
+                    cart[index].total = cart[index].price * newQuantity;
+
+                    // Update display
+                    updateCartDisplay();
+                }
+            }
+
+            // Remove item from cart
+            function removeFromCart(index) {
+                if (index >= 0 && index < cart.length) {
+                    cart.splice(index, 1);
+                    updateCartDisplay();
+                }
+            }
             // Handle barcode scanning
             $barcodeBtn.on('click', function() {
                 const barcode = $barcodeInput.val().trim();
@@ -491,6 +513,11 @@
                     $remainingAmountInput.val(Math.max(0, total - paid).toFixed(2));
                 }
             });
+
+            // Calculate total amount from cart items
+            function calculateTotal() {
+                return cart.reduce((sum, item) => sum + item.total, 0);
+            }
 
             // Handle quick add product
             $saveProductBtn.on('click', function() {
