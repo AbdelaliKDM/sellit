@@ -9,13 +9,16 @@
 
     <!-- Bootstrap 5 CSS -->
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
-    <link rel="stylesheet" href="{{ asset('asetts/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.css') }}">
     <!-- Font Awesome for icons -->
     {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> --}}
-    <link rel="stylesheet" href="{{ asset('asetts/css/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/font-awesome.css') }}">
 
     <!-- Custom styles -->
-    <link rel="stylesheet" href="{{ asset('asetts/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+
+    <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.js') }}"></script>
 
     <style>
         body {
@@ -131,11 +134,10 @@
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
-    <script src="{{ asset('asetts/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('asetts/js/jquery.js') }}"></script>
+
     @yield('scripts')
     <!-- Custom JavaScript -->
-    <script>
+    <{{-- script>
         // Toggle sidebar on mobile
         document.addEventListener('DOMContentLoaded', function() {
             const navbarToggler = document.querySelector('.navbar-toggler');
@@ -145,6 +147,6 @@
                 sidebar.classList.toggle('active');
             });
         });
-    </script>
+    </script> --}}
 </body>
 </html>
