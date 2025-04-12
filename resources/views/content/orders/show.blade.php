@@ -64,16 +64,16 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $currencySymbol }}{{ number_format($item->price, 2) }}</td>
+                                    <td>{{ number_format($item->price, 2) }} {{ $currencySymbol }}</td>
                                     <td>{{ $item->quantity }}</td>
-                                    <td>{{ $currencySymbol }}{{ number_format($item->price * $item->quantity, 2) }}</td>
+                                    <td>{{ number_format($item->price * $item->quantity, 2) }} {{ $currencySymbol }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
                             <tfoot class="table-light">
                                 <tr>
                                     <td colspan="3" class="text-end fw-bold">{{ __('app.total') }}:</td>
-                                    <td class="fw-bold">{{ $currencySymbol }}{{ number_format($order->total_amount, 2) }}</td>
+                                    <td class="fw-bold">{{ number_format($order->total_amount, 2) }} {{ $currencySymbol }}</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -121,18 +121,18 @@
 
                     <div class="mb-3">
                         <div class="fw-bold">{{ __('app.total_amount') }}:</div>
-                        <div class="fs-5">{{ $currencySymbol }}{{ number_format($order->total_amount, 2) }}</div>
+                        <div class="fs-5">{{ number_format($order->total_amount, 2) }} {{ $currencySymbol }}</div>
                     </div>
 
                     <div class="mb-3">
                         <div class="fw-bold">{{ __('app.total_paid') }}:</div>
-                        <div class="fs-5">{{ $currencySymbol }}{{ number_format($order->paid_amount, 2) }}</div>
+                        <div class="fs-5">{{ number_format($order->paid_amount, 2) }} {{ $currencySymbol }}</div>
                     </div>
 
                     <div class="mb-3">
                         <div class="fw-bold">{{ __('app.remaining') }}:</div>
                         <div class="fs-5 {{ $order->remaining_amount > 0 ? 'text-danger' : 'text-success' }}">
-                            {{ $currencySymbol }}{{ number_format($order->remaining_amount, 2) }}
+                            {{ number_format($order->remaining_amount, 2) }} {{ $currencySymbol }}
                         </div>
                     </div>
 
@@ -145,8 +145,8 @@
                         <div class="mb-3">
                             <label for="paid_amount" class="form-label">{{ __('app.update_payment') }}</label>
                             <div class="input-group">
-                                <span class="input-group-text">{{ $currencySymbol }}</span>
                                 <input type="number" class="form-control" id="paid_amount" name="paid_amount" value="{{ $order->paid_amount }}" min="0" step="0.01" required>
+                                <span class="input-group-text">{{ $currencySymbol }}</span>
                                 <button type="submit" class="btn btn-primary">{{ __('app.update') }}</button>
                             </div>
                         </div>

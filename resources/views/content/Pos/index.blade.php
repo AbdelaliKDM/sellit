@@ -65,24 +65,24 @@
                                     <div class="mb-3">
                                         <label for="paid-amount" class="form-label">{{ __('app.paid_amount') }}</label>
                                         <div class="input-group">
-                                            <span class="input-group-text">{{ $currencySymbol }}</span>
                                             <input type="number" class="form-control" id="paid-amount" value="0.00"
                                                 min="0" step="0.01">
+                                            <span class="input-group-text">{{ $currencySymbol }}</span>
                                         </div>
                                     </div>
                                     <div>
-                                        <label for="remaining-amount" class="form-label">{{ __('app.remaining') }}</label>
+                                        <label for="remaining-amount" class="form-label">{{ __('app.remaining_amount') }}</label>
                                         <div class="input-group">
-                                            <span class="input-group-text">{{ $currencySymbol }}</span>
                                             <input type="text" class="form-control" id="remaining-amount" value="0.00"
                                                 readonly>
+                                            <span class="input-group-text">{{ $currencySymbol }}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6 text-center">
                                 <h3 class="mb-2">{{ __('app.total') }}</h3>
-                                <h1 class="display-4 fw-bold text-primary mb-3" id="total-amount">{{ $currencySymbol }}0.00</h1>
+                                <h1 class="display-4 fw-bold text-primary mb-3" id="total-amount">0.00 {{ $currencySymbol }}</h1>
                                 <div class="d-grid gap-2">
                                     <button id="process-order-btn" class="btn btn-success btn-lg">
                                         <i class="fas fa-check-circle"></i> {{ __('app.process_order') }}
@@ -134,10 +134,10 @@
                                             <h6 class="card-title mb-1 text-truncate">{{ $product->name }}</h6>
                                             <p class="card-text mb-0">
                                                 @if ($product->hasActiveDiscount())
-                                                    <span class="text-decoration-line-through text-muted small">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</span>
-                                                    <span class="text-danger fw-bold">{{ $currencySymbol }}{{ number_format($product->getCurrentPrice(), 2) }}</span>
+                                                    <span class="text-decoration-line-through text-muted small">{{ number_format($product->selling_price, 2) }} {{ $currencySymbol }}</span>
+                                                    <span class="text-danger fw-bold">{{ number_format($product->getCurrentPrice(), 2) }} {{ $currencySymbol }}</span>
                                                 @else
-                                                    <span class="fw-bold">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</span>
+                                                    <span class="fw-bold">{{ number_format($product->selling_price, 2) }} {{ $currencySymbol }}</span>
                                                 @endif
                                             </p>
                                             <small class="text-muted">{{ __('app.stock') }}: {{ $product->quantity }}</small>
@@ -235,7 +235,7 @@
             let paidAmountManuallyChanged = false;
 
             // Add product to cart
-            function addToCart(product, quantity = 1) {
+            function addToCart(product, quantity = 1, fromBarcode = false) {
                 // Check if product already in cart
                 const existingItemIndex = cart.findIndex(item => item.id === product.id);
 
@@ -243,7 +243,7 @@
                     // Product exists in cart, increment quantity
                     cart[existingItemIndex].quantity += quantity;
                     cart[existingItemIndex].total = cart[existingItemIndex].price * cart[existingItemIndex].quantity;
-                    updateCartDisplay(existingItemIndex); // Focus on this item's quantity input
+                    updateCartDisplay(fromBarcode ? null : existingItemIndex); // Only focus on quantity if not from barcode
                 } else {
                     // New product, add to cart
                     cart.push({
@@ -255,28 +255,15 @@
                         image: product.image,
                         barcode: product.barcode
                     });
-                    updateCartDisplay(cart.length - 1); // Focus on the newly added item
+                    updateCartDisplay(fromBarcode ? null : cart.length - 1); // Only focus on quantity if not from barcode
                 }
-            }
 
-            // Remove item from cart
-            function removeFromCart(index) {
-                cart.splice(index, 1);
-                updateCartDisplay();
-            }
-
-            // Update cart quantity
-            function updateQuantity(index, quantity) {
-                if (quantity > 0) {
-                    cart[index].quantity = quantity;
-                    cart[index].total = cart[index].price * quantity;
-                    updateCartDisplay();
+                // If added from barcode, focus back on barcode input
+                if (fromBarcode) {
+                    setTimeout(function() {
+                        $barcodeInput.focus();
+                    }, 100);
                 }
-            }
-
-            // Calculate cart total
-            function calculateTotal() {
-                return cart.reduce((sum, item) => sum + item.total, 0);
             }
 
             // Update cart display
@@ -287,7 +274,7 @@
 
                 if (cart.length === 0) {
                     $tbody.append($emptyCartRow);
-                    $totalAmountDisplay.text(`{{ $currencySymbol }}0.00`);
+                    $totalAmountDisplay.text(`0.00 {{ $currencySymbol }}`);
                     $paidAmountInput.val('0.00');
                     $remainingAmountInput.val('0.00');
                     paidAmountManuallyChanged = false;
@@ -331,16 +318,16 @@
                     });
                     $quantityCell.append($quantityInput);
 
-                    // Store reference to input if this is the one to focus
-                    if (focusIndex === index) {
+                    // Store reference to input if this is the one to focus and focusIndex is not null
+                    if (focusIndex !== null && focusIndex === index) {
                         $quantityInputToFocus = $quantityInput;
                     }
 
                     // Price cell
-                    const $priceCell = $('<td>').text(`{{ $currencySymbol }}${item.price.toFixed(2)}`);
+                    const $priceCell = $('<td>').text(`${item.price.toFixed(2)} {{ $currencySymbol }}`);
 
                     // Total cell
-                    const $totalCell = $('<td>').addClass('fw-bold').text(`{{ $currencySymbol }}${item.total.toFixed(2)}`);
+                    const $totalCell = $('<td>').addClass('fw-bold').text(`${item.total.toFixed(2)} {{ $currencySymbol }}`);
 
                     // Action cell with remove button
                     const $actionCell = $('<td>');
@@ -363,7 +350,7 @@
                 });
 
                 // Update total display
-                $totalAmountDisplay.text(`{{ $currencySymbol }}${total.toFixed(2)}`);
+                $totalAmountDisplay.text(`${total.toFixed(2)} {{ $currencySymbol }}`);
 
                 // If paid amount hasn't been manually changed, set it equal to total
                 if (!paidAmountManuallyChanged) {
@@ -375,7 +362,7 @@
                     $remainingAmountInput.val(Math.max(0, total - paid).toFixed(2));
                 }
 
-                // Focus on the quantity input if specified
+                // Focus on the quantity input if specified and not null
                 if ($quantityInputToFocus) {
                     setTimeout(function() {
                         $quantityInputToFocus.focus().select();
@@ -395,8 +382,8 @@
                             if (data.error) {
                                 alert('Product not found');
                             } else {
-                                addToCart(data);
-                                $barcodeInput.val('').focus();
+                                addToCart(data, 1, true); // Pass true to indicate from barcode
+                                $barcodeInput.val('');
                             }
                         },
                         error: function(error) {
@@ -470,7 +457,7 @@
                             <div class="card-body p-2">
                                 <h6 class="card-title mb-1 text-truncate">${product.name}</h6>
                                 <p class="card-text mb-0">
-                                    <span class="fw-bold">{{ $currencySymbol }}${parseFloat(product.selling_price).toFixed(2)}</span>
+                                    <span class="fw-bold">${parseFloat(product.selling_price).toFixed(2)} {{ $currencySymbol }}</span>
                                 </p>
                                 <small class="text-muted">Stock: ${product.quantity}</small>
                             </div>

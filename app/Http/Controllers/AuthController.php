@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SettingsHelper;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -18,16 +19,21 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        return view('content.auth.login');
+        return view('content.auth.login')->with('registrationEnabled' , SettingsHelper::isRegistrationEnabled());
     }
 
-       /**
+    /**
      * Show the registration form.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function showRegistrationForm()
     {
+        // Check if registration is enabled
+        if (! SettingsHelper::isRegistrationEnabled()) {
+            return redirect()->route('login')->with('error', 'Registration is currently disabled.');
+        }
+
         return view('content.auth.register');
     }
 
@@ -39,6 +45,11 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        // Check if registration is enabled
+        if (! SettingsHelper::isRegistrationEnabled()) {
+            return redirect()->route('login')->with('error', 'Registration is currently disabled.');
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],

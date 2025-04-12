@@ -1,7 +1,7 @@
 @extends('layouts.blank')
 
 @section('content')
-<div class="row justify-content-center">
+<div class="min-vh-100 row justify-content-center align-items-center m-0">
     <div class="col-md-5">
         <div class="card">
             <div class="card-header bg-dark text-white">
@@ -44,17 +44,13 @@
                         </button>
                     </div>
 
+                    @if($registrationEnabled)
                     <div class="mt-3 text-center">
-                        @if (Route::has('password.request'))
-                            <a class="btn btn-link" href="{{ route('password.request') }}">
-                                Forgot Your Password?
-                            </a>
-                        @endif
+                        <a href="{{ route('register') }}" class="btn btn-outline-secondary">
+                            Create New Account
+                        </a>
                     </div>
-
-                    <div class="mt-3 text-center">
-                        <p>Don't have an account? <a href="{{ route('register') }}">Register here</a></p>
-                    </div>
+                    @endif
                 </form>
             </div>
         </div>

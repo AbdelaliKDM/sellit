@@ -26,7 +26,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="card-title mb-0">{{ __('app.total_amount') }}</h6>
-                            <h2 class="mt-2 mb-0">{{ $currencySymbol }}{{ number_format($orders->sum('total_amount'), 2) }}</h2>
+                            <h2 class="mt-2 mb-0">{{ number_format($orders->sum('total_amount'), 2) }} {{ $currencySymbol }}</h2>
                         </div>
                         <div>
                             <i class="fas fa-dollar-sign fa-3x opacity-50"></i>
@@ -41,7 +41,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="card-title mb-0">{{ __('app.total_remaining') }}</h6>
-                            <h2 class="mt-2 mb-0">{{ $currencySymbol }}{{ number_format($orders->sum('remaining_amount'), 2) }}</h2>
+                            <h2 class="mt-2 mb-0">{{ number_format($orders->sum('remaining_amount'), 2) }} {{ $currencySymbol }}</h2>
                         </div>
                         <div>
                             <i class="fas fa-hand-holding-usd fa-3x opacity-50"></i>
@@ -56,7 +56,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="card-title mb-0">{{ __('app.total_profit') }}</h6>
-                            <h2 class="mt-2 mb-0">{{ $currencySymbol }}{{ number_format($orders->sum('total_profit'), 2) }}</h2>
+                            <h2 class="mt-2 mb-0">{{ number_format($orders->sum('total_profit'), 2) }} {{ $currencySymbol }}</h2>
                         </div>
                         <div>
                             <i class="fas fa-chart-line fa-3x opacity-50"></i>
@@ -144,16 +144,16 @@
                                 <span class="text-muted">{{ __('app.walk_in_customer') }}</span>
                                 @endif
                             </td>
-                            <td>{{ $currencySymbol }}{{ number_format($order->total_amount, 2) }}</td>
-                            <td>{{ $currencySymbol }}{{ number_format($order->paid_amount, 2) }}</td>
+                            <td>{{ number_format($order->total_amount, 2) }} {{ $currencySymbol }}</td>
+                            <td>{{ number_format($order->paid_amount, 2) }} {{ $currencySymbol }}</td>
                             <td>
                                 @if($order->remaining_amount > 0)
-                                <span class="text-danger">{{ $currencySymbol }}{{ number_format($order->remaining_amount, 2) }}</span>
+                                <span class="text-danger">{{ number_format($order->remaining_amount, 2) }} {{ $currencySymbol }}</span>
                                 @else
-                                <span class="text-success">{{ $currencySymbol }}0.00</span>
+                                <span class="text-success">0.00 {{ $currencySymbol }}</span>
                                 @endif
                             </td>
-                            <td>{{ $currencySymbol }}{{ number_format($order->total_profit, 2) }}</td>
+                            <td>{{ number_format($order->total_profit, 2) }} {{ $currencySymbol }}</td>
                             <td>
                                 @if($order->status == 'completed')
                                 <span class="badge bg-success">{{ __('app.completed') }}</span>

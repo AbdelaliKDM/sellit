@@ -84,13 +84,13 @@
                             </td>
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->barcode }}</td>
-                            <td>{{ $currencySymbol }}{{ number_format($product->purchase_price, 2) }}</td>
+                            <td>{{ number_format($product->purchase_price, 2) }} {{ $currencySymbol }}</td>
                             <td>
                                 @if($product->hasActiveDiscount())
-                                <span class="text-decoration-line-through">{{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}</span>
-                                <span class="text-danger">{{ $currencySymbol }}{{ number_format($product->getCurrentPrice(), 2) }}</span>
+                                <span class="text-decoration-line-through">{{ number_format($product->selling_price, 2) }} {{ $currencySymbol }}</span>
+                                <span class="text-danger">{{ number_format($product->getCurrentPrice(), 2) }} {{ $currencySymbol }}</span>
                                 @else
-                                {{ $currencySymbol }}{{ number_format($product->selling_price, 2) }}
+                                {{ number_format($product->selling_price, 2) }} {{ $currencySymbol }}
                                 @endif
                             </td>
                             <td>{{ $product->quantity }}</td>

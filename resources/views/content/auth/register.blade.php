@@ -1,7 +1,7 @@
 @extends('layouts.blank')
 
 @section('content')
-<div class="row justify-content-center">
+<div class="min-vh-100 row justify-content-center align-items-center m-0">
     <div class="col-md-5">
         <div class="card">
             <div class="card-header bg-dark text-white">
@@ -53,7 +53,9 @@
                     </div>
 
                     <div class="mt-3 text-center">
-                        <p>Already have an account? <a href="{{ route('login') }}">Login here</a></p>
+                        <a href="{{ route('login') }}" class="btn btn-outline-secondary">
+                            Back to Login
+                        </a>
                     </div>
                 </form>
             </div>

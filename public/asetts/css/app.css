@@ -1,7 +1,70 @@
 /* Main Application Styles */
+@font-face {
+    font-family: 'Readex Pro';
+    src: url('../fonts/ReadexPro-Light.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Readex Pro';
+    src: url('../fonts/ReadexPro-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Readex Pro';
+    src: url('../fonts/ReadexPro-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Readex Pro';
+    src: url('../fonts/ReadexPro-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Readex Pro';
+    src: url('../fonts/ReadexPro-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Readex Pro';
+    src: url('../fonts/ReadexPro-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 body {
     min-height: 100vh;
     overflow-x: hidden;
+    font-family: 'Readex Pro', sans-serif;
+}
+
+/* Accent Color Variables */
+:root {
+    --accent-color: #1a237e;
+    --accent-color-hover: #303f9f;
+    --accent-color-light: rgba(26, 35, 126, 0.1);
+    --accent-color-medium: rgba(26, 35, 126, 0.2);
+}
+
+/* Remove Rounded Corners */
+.btn, .card, .form-control, .form-select, .alert, .nav-link, .dropdown-menu,
+.input-group-text, .modal-content, .badge, .pagination .page-link {
+    border-radius: 0 !important;
 }
 
 /* Sidebar Styles */
@@ -25,7 +88,7 @@ body {
 
 .sidebar .nav-link.active {
     color: #fff;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--accent-color);
 }
 
 .sidebar .nav-link i {
@@ -87,7 +150,7 @@ body {
     background-color: #00796b;
 }
 .bg-primary-dark {
-    background-color: #1565c0;
+    background-color: var(--accent-color);
 }
 .bg-secondary-dark {
     background-color: #4c4e52;
@@ -138,47 +201,37 @@ body {
 }
 
 .auth-card {
-    border-radius: 0;
     border: none;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 .auth-card-header {
-    border-radius: 0;
     border-bottom: none;
 }
 
-.auth-form-control {
-    border-radius: 0;
-}
-
 .auth-form-control:focus {
-    box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.25);
-    border-color: #212529;
-}
-
-.auth-btn {
-    border-radius: 0;
+    box-shadow: 0 0 0 0.25rem var(--accent-color-light);
+    border-color: var(--accent-color);
 }
 
 .auth-btn-primary {
-    background-color: #212529;
-    border-color: #212529;
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
 }
 
 .auth-btn-primary:hover,
 .auth-btn-primary:focus,
 .auth-btn-primary:active {
-    background-color: #343a40 !important;
-    border-color: #343a40 !important;
+    background-color: var(--accent-color-hover) !important;
+    border-color: var(--accent-color-hover) !important;
 }
 
 .auth-btn-link {
-    color: #212529;
+    color: var(--accent-color);
 }
 
 .auth-btn-link:hover {
-    color: #343a40;
+    color: var(--accent-color-hover);
 }
 
 /* Image Styles */
@@ -186,7 +239,7 @@ body {
     width: 50px;
     height: 50px;
     overflow: hidden;
-    border-radius: 50%;
+    border-radius: 0;
 }
 
 .profile-image img {
@@ -200,7 +253,7 @@ body {
     width: 200px;
     height: 200px;
     overflow: hidden;
-    border-radius: 50%;
+    border-radius: 0;
     margin: 0 auto;
 }
 
@@ -214,4 +267,33 @@ body {
 /* Utility Classes */
 .cursor-pointer {
     cursor: pointer;
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--accent-color-hover) !important;
+    border-color: var(--accent-color-hover) !important;
+}
+
+/* Form Control Focus */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem var(--accent-color-light);
+}
+
+/* Link Colors */
+a {
+    color: var(--accent-color);
+}
+
+a:hover {
+    color: var(--accent-color-hover);
 }

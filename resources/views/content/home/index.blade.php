@@ -107,7 +107,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <div class="stat-value">{{ $currencySymbol }}{{ number_format($totalIncome, 2) }}</div>
+                                <div class="stat-value">{{ number_format($totalIncome, 2) }} {{ $currencySymbol }}</div>
                                 <div class="stat-title">{{ __('app.total_income') }}</div>
                             </div>
                             <div class="stat-icon">
@@ -129,7 +129,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <div class="stat-value">{{ $currencySymbol }}{{ number_format($totalProfit, 2) }}</div>
+                                <div class="stat-value">{{ number_format($totalProfit, 2) }} {{ $currencySymbol }}</div>
                                 <div class="stat-title">{{ __('app.total_profit') }}</div>
                             </div>
                             <div class="stat-icon">
@@ -153,7 +153,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <div class="stat-value">{{ $currencySymbol }}{{ number_format($todayIncome, 2) }}</div>
+                                <div class="stat-value">{{ number_format($todayIncome, 2) }} {{ $currencySymbol }}</div>
                                 <div class="stat-title">{{ __('app.todays_income') }}</div>
                             </div>
                             <div class="stat-icon">
@@ -175,7 +175,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <div class="stat-value">{{ $currencySymbol }}{{ number_format($todayProfit, 2) }}</div>
+                                <div class="stat-value">{{ number_format($todayProfit, 2) }} {{ $currencySymbol }}</div>
                                 <div class="stat-title">{{ __('app.todays_profit') }}</div>
                             </div>
                             <div class="stat-icon">

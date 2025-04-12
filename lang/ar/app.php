@@ -130,7 +130,7 @@ return [
     'remaining' => 'المتبقي',
     'profit' => 'الربح',
     'date' => 'التاريخ',
-    'walk_in_customer' => 'عميل عابر',
+    'walk_in_customer' => 'عميل غير مسجل',
     'no_orders_found' => 'لم يتم العثور على طلبات.',
     'order_details' => 'الطلب #:id',
     'back_to_orders' => 'العودة إلى الطلبات',
@@ -140,7 +140,8 @@ return [
     'completed' => 'مكتمل',
     'pending' => 'قيد الانتظار',
     'cancelled' => 'ملغي',
-
+    'paid_amount' => 'المبلغ المدفوع',
+    'remaining_amount' => 'المبلغ المتبقي',
     'total_paid' => 'المبلغ المدفوع',
     'update_payment' => 'تحديث الدفع',
     'change_status' => 'تغيير الحالة',
@@ -165,7 +166,7 @@ return [
     'point_of_sale' => 'نقطة البيع',
     'view_orders' => 'عرض الطلبات',
     'scan_barcode' => 'مسح الباركود...',
-    'walking_customer' => 'عميل عابر',
+    'walking_customer' => 'عميل غير مسجل',
     'no_items_in_cart' => 'لا توجد عناصر في السلة',
 
     'price' => 'السعر',
