@@ -17,6 +17,17 @@
     <!-- Custom styles -->
     <link rel="stylesheet" href="{{ asset('asetts/css/app.css') }}">
 
+    <style>
+        body {
+            background-color: #e9ecef;
+        }
+        .content {
+            background-color: transparent;
+            padding: 20px;
+            margin: 20px;
+        }
+    </style>
+
     @yield('styles')
 </head>
 <body>

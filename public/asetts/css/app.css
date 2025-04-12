@@ -157,6 +157,19 @@ body {
 }
 
 /* Card Styles */
+.card {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0 !important;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
 .card-footer {
     border-top: none;
 }
@@ -203,6 +216,27 @@ body {
 .auth-card {
     border: none;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.btn-primary {
+    background-color: #1a237e;
+    border-color: #1a237e;
+}
+
+.btn-primary:hover {
+    background-color: #303f9f;
+    border-color: #303f9f;
+}
+
+/* Form Control Focus */
+.form-control:focus {
+    border-color: #1a237e;
+    box-shadow: 0 0 0 0.25rem rgba(26, 35, 126, 0.25);
 }
 
 .auth-card-header {
