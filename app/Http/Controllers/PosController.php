@@ -29,9 +29,9 @@ class PosController extends Controller
     {
         $query = $request->input('query');
         $products = Product::where('status', 'available')
-            ->where(function($q) use ($query) {
+            ->where(function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('barcode', 'like', "%{$query}%");
+                    ->orWhere('barcode', 'like', "%{$query}%");
             })
             ->get();
 
@@ -45,8 +45,9 @@ class PosController extends Controller
     {
         $barcode = $request->input('barcode');
         $product = Product::where('barcode', $barcode)->where('status', 'available')->first();
-$product->price = $product->getCurrentPrice();
+
         if ($product) {
+            $product->price = $product->getCurrentPrice();
             return response()->json($product);
         }
 
