@@ -38,7 +38,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <div class="d-flex justify-content-between w-100">
-                <a class="navbar-brand" href="#">{{ \App\Helpers\SettingsHelper::getAppName() }}</a>
+                <a class="navbar-brand" href="#">
+                    <img src="{{ asset('/logo.png') }}" alt="Logo" height="40">
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -63,7 +65,7 @@
                 </div>
             </div>
         </div>
-    </nav>
+    ee</nav>
 
     <div class="d-flex">
         <!-- Sidebar -->
